@@ -1,0 +1,36 @@
+package com.tuyenshop.payload.response;
+
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Set;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ProductDetailResponse {
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private BigDecimal salePrice;
+    private String description;
+    private String status;
+    private String slug;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime updatedAt;
+    
+    private Long brandId;
+    private String brandName;
+    private Long categoryId;
+    private String categoryName;
+    
+    private Double averageRating;
+    private Long reviewCount;
+
+    private Set<String> images;
+    private List<ProductVariantSimpleResponse> variants;
+}
