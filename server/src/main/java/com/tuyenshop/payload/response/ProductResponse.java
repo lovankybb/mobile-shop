@@ -29,5 +29,7 @@ public class ProductResponse {
     private String brandName;
     private Long categoryId;
     private String categoryName;
+    
+    private Boolean featured;
 
     }

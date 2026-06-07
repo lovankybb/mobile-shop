@@ -68,6 +68,7 @@ public class AuthController {
                                                  userDetails.getId(), 
                                                  userDetails.getUsername(), 
                                                  userDetails.getEmail(), 
+                                                 userDetails.getAvatarUrl(),
                                                  roles);
                                                  
         return ApiResponse.success("Login successful", result);

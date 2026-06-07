@@ -1,66 +1,114 @@
-import React from 'react';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import { Terminal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getProducts } from '../services/productService';
+import { getBrands } from '../services/brandService';
+import './HomePage.css';
 
-const Home = () => {
-  return (
-    <div className="space-y-12">
-      {/* Hero Section */}
-      <section className="border border-gray-800 bg-gray-900/50 p-8 relative overflow-hidden">
-        {/* Tech decorative elements */}
-        <div className="absolute top-0 left-0 w-2 h-2 bg-blue-500"></div>
-        <div className="absolute top-0 right-0 w-2 h-2 bg-blue-500"></div>
-        <div className="absolute bottom-0 left-0 w-2 h-2 bg-blue-500"></div>
-        <div className="absolute bottom-0 right-0 w-2 h-2 bg-blue-500"></div>
+export default function Home() {
+  const navigate = useNavigate();
+
+  const [brands, setBrands] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [bannerProduct, setBannerProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [brandRes, productRes, bannerRes] = await Promise.all([
+          getBrands(),
+          getProducts(0, 8),
+          getProducts(0, 1, '', null, null, true)
+        ]);
+        setBrands(brandRes.result?.content || brandRes.result || []);
+        const rawProducts = productRes.result?.content || productRes.result || [];
+        setFeaturedProducts(rawProducts.filter(p => p.status === 'ACTIVE' || !p.status));
         
-        <div className="max-w-3xl">
-          <div className="flex items-center space-x-2 text-blue-400 mb-4 font-mono text-sm">
-            <Terminal size={16} />
-            <span>he_thong.khoi_dong()</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-            THIẾT BỊ DI ĐỘNG THẾ HỆ MỚI
-          </h1>
-          <p className="text-gray-400 mb-8 max-w-2xl leading-relaxed">
-            Nâng cấp thiết bị công nghệ với hiệu năng hàng đầu.
-            Kho hàng của chúng tôi được đồng bộ hóa theo thời gian thực.
-          </p>
-          <div className="flex space-x-4">
-            <Button size="lg">KHÁM PHÁ DANH MỤC</Button>
-            <Button variant="outline" size="lg">XEM CẤU HÌNH</Button>
-          </div>
-        </div>
-      </section>
+        const rawBanner = bannerRes.result?.content || bannerRes.result || [];
+        if (rawBanner.length > 0) {
+          setBannerProduct(rawBanner[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-      {/* Component Showcase (Temporary to verify tech style) */}
-      <section className="mt-12">
-        <h2 className="font-mono text-lg text-gray-400 border-b border-gray-800 pb-2 mb-6">
-          // HE_THONG.GIAO_DIEN
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-4 p-6 border border-gray-800 bg-[#0a0a0a]">
-            <h3 className="font-mono text-sm text-blue-500 mb-4">{"<Input />"}</h3>
-            <Input label="TÀI KHOẢN" placeholder="Nhập định danh..." />
-            <Input label="MẬT KHẨU" type="password" placeholder="••••••••" />
-            <Input label="TRẠNG THÁI LỖI" error="Phát hiện thông tin không hợp lệ." defaultValue="admin" />
+  const onNavigate = (path) => {
+    navigate(path);
+  };
+
+  const fmt = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
+
+  return (
+    <div className="hp-root">
+      <div className="hp-container">
+        
+        {/* ══ HERO BANNER ══ */}
+        <div className="hp-hero">
+          <div className="hp-hero-content">
+            <h1 className="hp-hero-title">{bannerProduct ? bannerProduct.name : 'AURA S24 ULTRA'}</h1>
+            <p className="hp-hero-sub">{bannerProduct && bannerProduct.description ? bannerProduct.description : 'Đỉnh cao công nghệ trong tầm tay.'}</p>
+            <p className="hp-hero-status">Đặt hàng ngay.</p>
+            <button className="hp-hero-btn" onClick={() => onNavigate(bannerProduct ? `/products/${bannerProduct.id}` : '/products')}>
+              MUA NGAY
+            </button>
           </div>
-          
-          <div className="space-y-4 p-6 border border-gray-800 bg-[#0a0a0a]">
-            <h3 className="font-mono text-sm text-blue-500 mb-4">{"<Button />"}</h3>
-            <div className="flex flex-wrap gap-4">
-              <Button>HÀNH ĐỘNG CHÍNH</Button>
-              <Button variant="secondary">PHỤ TRỢ</Button>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <Button variant="outline">VIỀN NGOÀI</Button>
-              <Button variant="danger">CHẤM DỨT</Button>
-            </div>
+          <div className="hp-hero-image-wrap">
+             {bannerProduct && bannerProduct.image ? (
+               <img className="hp-hero-image" src={bannerProduct.image} alt={bannerProduct.name} />
+             ) : (
+               <div className="hp-hero-image" style={{width: 200, height: 350, background: '#d1d5db', borderRadius: 24}}></div>
+             )}
           </div>
         </div>
-      </section>
+
+        {/* ══ EXPLORE BRANDS ══ */}
+        <h2 className="hp-section-header">Khám phá Thương hiệu</h2>
+        <div className="hp-brands-row">
+          {brands.map((brand) => (
+            <div key={brand.id} className="hp-brand-item" onClick={() => onNavigate(`/products?brand=${brand.id}`)}>
+              <div className="hp-brand-circle">
+                {brand.logo ? (
+                   <img className="hp-brand-image" src={brand.logo} alt={brand.name} />
+                ) : (
+                   <span style={{fontWeight: 700, color: '#9ca3af'}}>{brand.name}</span>
+                )}
+              </div>
+              <span className="hp-brand-name">{brand.name}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* ══ FEATURED PRODUCTS ══ */}
+        <h2 className="hp-section-header">Sản phẩm Nổi bật</h2>
+        <div className="hp-prod-grid">
+          {featuredProducts.map((phone) => (
+            <div key={phone.id} className="hp-prod-card" onClick={() => onNavigate(`/products/${phone.id}`)}>
+              <div className="hp-prod-thumb">
+                <img className="hp-prod-image" src={phone.image || 'https://via.placeholder.com/150'} alt={phone.name} />
+              </div>
+              <div className="hp-prod-info">
+                <h3 className="hp-prod-name">{phone.name}</h3>
+                <p className="hp-prod-specs">
+                  {phone.categoryName || 'Điện thoại'} | 256GB
+                </p>
+                <div className="hp-prod-price">{fmt(phone.salePrice)}</div>
+                <button className="hp-prod-btn">
+                  Xem chi tiết
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
     </div>
   );
-};
-
-export default Home;
+}

@@ -27,4 +27,27 @@ public class CloudinaryService {
     public void deleteImage(String publicId) throws IOException {
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
+
+    public void deleteImageByUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            return;
+        }
+        try {
+            int uploadIndex = imageUrl.indexOf("/upload/");
+            if (uploadIndex != -1) {
+                String afterUpload = imageUrl.substring(uploadIndex + 8);
+                int versionSlashIndex = afterUpload.indexOf("/");
+                if (versionSlashIndex != -1 && afterUpload.startsWith("v")) {
+                    afterUpload = afterUpload.substring(versionSlashIndex + 1);
+                }
+                String publicId = afterUpload;
+                if (afterUpload.lastIndexOf(".") != -1) {
+                    publicId = afterUpload.substring(0, afterUpload.lastIndexOf("."));
+                }
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to delete image: " + e.getMessage());
+        }
+    }
 }

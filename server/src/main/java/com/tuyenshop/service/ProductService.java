@@ -50,11 +50,14 @@ public class ProductService {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(this::mapToProductResponse);
     }
 
-    public Page<ProductResponse> getProductsByFilter(String keyword, Long categoryId, Long brandId, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+    public Page<ProductResponse> getProductsByFilter(String keyword, Long categoryId, Long brandId, BigDecimal minPrice, BigDecimal maxPrice, Boolean featured, Pageable pageable) {
         Specification<Product> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -72,6 +75,9 @@ public class ProductService {
             }
             if (maxPrice != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
+            }
+            if (featured != null) {
+                predicates.add(criteriaBuilder.equal(root.get("featured"), featured));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -101,9 +107,30 @@ public class ProductService {
         return mapToProductResponse(productRepository.save(product));
     }
 
+    public ProductResponse updateProductStatus(Long id, com.tuyenshop.model.ProductStatus status) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setStatus(status);
+        return mapToProductResponse(productRepository.save(product));
+    }
+
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        if (product.getImages() != null) {
+            for (ProductImage image : product.getImages()) {
+                cloudinaryService.deleteImageByUrl(image.getUrl());
+            }
+        }
         productRepository.delete(product);
+    }
+
+    private void clearOtherFeaturedProducts(Long currentProductId) {
+        java.util.List<Product> featuredProducts = productRepository.findByFeaturedTrue();
+        for (Product p : featuredProducts) {
+            if (currentProductId == null || !p.getId().equals(currentProductId)) {
+                p.setFeatured(false);
+                productRepository.save(p);
+            }
+        }
     }
 
     private void updateProductFromRequest(Product product, ProductCreationRequest request) {
@@ -113,6 +140,11 @@ public class ProductService {
         product.setDescription(request.getDescription());
         product.setStatus(request.getStatus());
         product.setSlug(request.getSlug());
+        product.setFeatured(request.getFeatured() != null ? request.getFeatured() : false);
+        
+        if (product.getFeatured()) {
+            clearOtherFeaturedProducts(product.getId());
+        }
 
         if (request.getBrandId() != null) {
             Brand brand = brandRepository.findById(request.getBrandId()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
@@ -127,17 +159,29 @@ public class ProductService {
         } else {
             product.setCategory(null);
         }
+
+        if (request.getImages() != null) {
+            // Find images to delete from cloudinary
+            List<String> newImageUrls = request.getImages();
+            for (ProductImage existingImg : product.getImages()) {
+                if (!newImageUrls.contains(existingImg.getUrl())) {
+                    cloudinaryService.deleteImageByUrl(existingImg.getUrl());
+                }
+            }
+            product.getImages().clear();
+            for (String url : request.getImages()) {
+                ProductImage productImage = new ProductImage();
+                productImage.setUrl(url);
+                productImage.setProduct(product);
+                product.getImages().add(productImage);
+            }
+        }
     }
 
     private ProductResponse mapToProductResponse(Product product) {
-
-        ProductResponse productResponse = productMapper.toResponse(product);
-        // map main images if needed
-        if (!product.getImages().isEmpty()) {
-            productResponse.setImage(product.getImages().getFirst().getUrl());
-        }
-        return productResponse;
-
+        ProductResponse response = productMapper.toResponse(product);
+        response.setFeatured(product.getFeatured() != null ? product.getFeatured() : false);
+        return response;
     }
 
     public ProductDetailResponse getProductDetailById(Long id) {
@@ -152,6 +196,7 @@ public class ProductService {
 
     private ProductDetailResponse mapToProductDetailResponse(Product product) {
         ProductDetailResponse response = productMapper.toDetailResponse(product);
+        response.setFeatured(product.getFeatured() != null ? product.getFeatured() : false);
         
         response.setImages(product.getImages().stream().map(ProductImage::getUrl).collect(Collectors.toSet()));
         

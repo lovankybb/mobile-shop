@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { login } from '../services/authService';
-import { Terminal, ShieldAlert } from 'lucide-react';
+import { Smartphone, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const Login = () => {
     try {
       setIsLoading(true);
       await login(formData.username, formData.password);
-      window.location.href = '/'; // Reloads and updates auth state in layout
+      window.location.href = '/'; 
     } catch (err) {
       setError(err.response?.data?.message || 'Lỗi hệ thống. Vui lòng thử lại sau.');
     } finally {
@@ -35,37 +35,34 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-      <div className="w-full max-w-md border border-gray-800 bg-[#0a0a0a] p-8 relative overflow-hidden">
-        {/* Decorative corner borders */}
-        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-blue-500"></div>
-        <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-blue-500"></div>
-        <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-blue-500"></div>
-        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-blue-500"></div>
-
-        <div className="flex flex-col items-center mb-8">
-          <Terminal size={32} className="text-blue-500 mb-2" />
-          <h2 className="text-2xl font-bold font-mono tracking-wider">ĐĂNG NHẬP</h2>
-          <p className="text-gray-500 text-xs font-mono mt-1">// AUTHENTICATION_REQUIRED</p>
+    <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-50 py-12">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-10 border border-gray-100">
+        
+        <div className="flex flex-col items-center mb-10">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
+            <Smartphone size={24} />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Chào mừng trở lại</h2>
+          <p className="text-gray-500 mt-2 text-sm font-medium">Vui lòng nhập thông tin để đăng nhập.</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-900/20 border border-red-800/50 flex items-center space-x-3">
-            <ShieldAlert size={16} className="text-red-500 flex-shrink-0" />
-            <span className="text-red-400 text-sm font-mono">{error}</span>
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-center space-x-3">
+            <AlertCircle size={18} className="text-red-500 flex-shrink-0" />
+            <span className="text-red-600 text-sm font-medium">{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <Input 
-            label="TÀI KHOẢN" 
+            label="Tên đăng nhập" 
             name="username" 
             value={formData.username}
             onChange={handleChange}
-            placeholder="Nhập tên người dùng..." 
+            placeholder="Nhập tên đăng nhập" 
           />
           <Input 
-            label="MẬT KHẨU" 
+            label="Mật khẩu" 
             name="password" 
             type="password" 
             value={formData.password}
@@ -75,17 +72,17 @@ const Login = () => {
 
           <Button 
             type="submit" 
-            className="w-full mt-4" 
+            className="w-full mt-2" 
             disabled={isLoading}
           >
-            {isLoading ? 'ĐANG XÁC THỰC...' : 'TRUY CẬP HỆ THỐNG'}
+            {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </Button>
         </form>
 
-        <div className="mt-6 text-center font-mono text-sm text-gray-500">
-          Chưa có quyền truy cập?{' '}
-          <Link to="/register" className="text-blue-400 hover:text-blue-300 transition-colors">
-            Cấp quyền mới (Đăng ký)
+        <div className="mt-8 text-center text-sm text-gray-500 font-medium">
+          Chưa có tài khoản?{' '}
+          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+            Đăng ký
           </Link>
         </div>
       </div>

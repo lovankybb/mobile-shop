@@ -22,6 +22,11 @@ A modern e-commerce backend API for a mobile shop. Designed to manage a complex 
 - Added `@Version` to `ProductVariant` to handle inventory concurrency (Optimistic Locking).
 - Built JPA entities for the Order Domain (`Order`, `OrderDetail`, `PaymentAttempt`) with full support for optional/guest users.
 - Wrapped all authentication and user endpoints into a standardized `ApiResponse` structure.
+- Updated Shop name to "Bảo Bình Mobile" and stored logo URL in frontend `.env`.
+- Added unit and integration tests for crucial checkout features (`OrderServiceTest` and `OrderControllerIntegrationTest`).
+- Created an "About Us" page with shop info, addresses, and contacts. Updated navigation bar accordingly.
+- Integrated the Rating and Review feature on the frontend (`ProductReviews` component in `ProductDetail.jsx`), allowing logged-in buyers to submit and view product feedback.
+- Implemented a custom `404 Not Found` page with a catch-all route to gracefully handle invalid URLs in both public and admin areas.
 
 ## Todo Lists
 
@@ -43,11 +48,11 @@ A modern e-commerce backend API for a mobile shop. Designed to manage a complex 
 - [x] Payment gateway integration (VNPAY / Momo).
 - [x] Write integration tests / Postman collection updates.
 
-### 4. Shopping Cart Module (In Progress)
-- [ ] Create `Cart` and `CartItem` Entities linking to `User` and `ProductVariant`.
-- [ ] Create `CartRepository` and `CartItemRepository`.
-- [ ] Build `CartService` to add/remove/update cart items and clear cart.
-- [ ] Build `CartController` for the API endpoints.
+### 4. Shopping Cart Module (Completed)
+- [x] Create `Cart` and `CartItem` Entities linking to `User` and `ProductVariant`.
+- [x] Create `CartRepository` and `CartItemRepository`.
+- [x] Build `CartService` to add/remove/update cart items and clear cart.
+- [x] Build `CartController` for the API endpoints.
 
 ### 5. Reviews & Ratings Module (Completed)
 - [x] Create `Review` Entity with relations to `User` and `Product`. (Done)
@@ -63,6 +68,18 @@ A modern e-commerce backend API for a mobile shop. Designed to manage a complex 
 - [x] Build `StatisticController` restricted to `ADMIN` role.
 
 ### 7. Frontend Application (React + Vite)
-- [ ] Initialize Vite React project with TailwindCSS.
-- [ ] Set up routing and core layout.
-- [ ] Implement robust state management and API integration structure.
+- [x] Initialize Vite React project with TailwindCSS.
+- [x] Set up routing and core layout.
+- [x] Implement robust state management and API integration structure.
+- [x] Build Authentication Flow (Login & Register).
+- [x] Build Product Catalog (ProductList & ProductCard).
+- [x] Build Admin Management Dashboard.
+  - [x] Color Management.
+  - [x] Version Management.
+  - [x] Brand Management.
+  - [x] Category Management.
+  - [x] Product Management.
+  - [x] Order Management.
+
+### Known Bugs / Tech Debt
+- [x] CORS issue still persists on frontend `GET /api/products` (Backend configuration not fully applied or intercepted by another filter). To be fixed later.

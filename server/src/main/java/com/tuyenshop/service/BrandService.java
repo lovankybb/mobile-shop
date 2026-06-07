@@ -20,6 +20,9 @@ public class BrandService {
     @Autowired
     private BrandRepository brandRepository;
     
+    @Autowired
+    private CloudinaryService cloudinaryService;
+    
     public List<BrandResponse> getAllBrands() {
         return brandRepository.findAll().stream().map(brandMapper::toResponse).collect(Collectors.toList());
     }
@@ -35,13 +38,22 @@ public class BrandService {
     
     public BrandResponse updateBrand(Long id, Brand brandDetails) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        
+        if (brand.getLogo() != null && !brand.getLogo().equals(brandDetails.getLogo())) {
+            cloudinaryService.deleteImageByUrl(brand.getLogo());
+        }
+        
         brand.setName(brandDetails.getName());
+        brand.setLogo(brandDetails.getLogo());
         brand.setDescription(brandDetails.getDescription());
         return brandMapper.toResponse(brandRepository.save(brand));
     }
     
     public void deleteBrand(Long id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        if (brand.getLogo() != null) {
+            cloudinaryService.deleteImageByUrl(brand.getLogo());
+        }
         brandRepository.delete(brand);
     }
 }

@@ -2,10 +2,10 @@ import api from './api';
 
 export const login = async (username, password) => {
   const response = await api.post('/auth/signin', { username, password });
-  if (response.data.data.token) {
-    localStorage.setItem('token', response.data.data.token);
+  if (response.data.result && response.data.result.token) {
+    localStorage.setItem('token', response.data.result.token);
     // Optionally store user info
-    localStorage.setItem('user', JSON.stringify(response.data.data));
+    localStorage.setItem('user', JSON.stringify(response.data.result));
   }
   return response.data;
 };

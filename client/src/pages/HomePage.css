@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.hp-root * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.hp-root {
+  background: #ffffff;
+  color: #111827;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding-bottom: 80px;
+  min-height: 100vh;
+}
+
+.hp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ══ HERO BANNER ══ */
+.hp-hero {
+  margin-top: 55px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #e4e2de 0%, #c9c9c7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 80px;
+  min-height: 480px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hp-hero-content {
+  flex: 1;
+  max-width: 450px;
+  z-index: 2;
+}
+
+.hp-hero-title {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 800;
+  line-height: 1.1;
+  color: #111827;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.hp-hero-sub {
+  font-size: 24px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.hp-hero-status {
+  font-size: 16px;
+  color: #4b5563;
+  margin-bottom: 32px;
+}
+
+.hp-hero-btn {
+  background: #1e3a8a; /* Dark Blue */
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 36px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hp-hero-btn:hover {
+  background: #172554;
+  transform: translateY(-2px);
+}
+
+.hp-hero-image-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.hp-hero-image {
+  max-height: 400px;
+  object-fit: contain;
+  transform: scale(1.1) rotate(-5deg);
+  transition: transform 0.5s ease;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.15));
+}
+
+.hp-hero:hover .hp-hero-image {
+  transform: scale(1.15) rotate(-3deg);
+}
+
+
+/* ══ EXPLORE BRANDS ══ */
+.hp-section-header {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 72px 0 36px;
+  letter-spacing: -0.01em;
+}
+
+.hp-brands-row {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.hp-brands-row::-webkit-scrollbar {
+  display: none;
+}
+
+.hp-brand-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  min-width: 130px;
+}
+
+.hp-brand-circle {
+  width: 140px;
+  height: 80px;
+  border-radius: 20%;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 24px;
+}
+
+.hp-brand-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.hp-brand-item:hover .hp-brand-circle {
+  background: #e5e7eb;
+  transform: translateY(-4px);
+}
+
+.hp-brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ══ FEATURED PRODUCTS ══ */
+.hp-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.hp-prod-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #f3f4f6;
+  padding: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.hp-prod-card:hover {
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.06);
+  border-color: #e5e7eb;
+  transform: translateY(-4px);
+}
+
+.hp-prod-thumb {
+  background: #f9fafb;
+  border-radius: 12px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.hp-prod-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.hp-prod-card:hover .hp-prod-image {
+  transform: scale(1.05);
+}
+
+.hp-prod-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.hp-prod-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.hp-prod-specs {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  height: 38px; /* Approx 2 lines */
+  overflow: hidden;
+}
+
+.hp-prod-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+.hp-prod-btn {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 12px 0;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: auto;
+}
+
+.hp-prod-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+@media (max-width: 1024px) {
+  .hp-prod-grid { grid-template-columns: repeat(3, 1fr); }
+  .hp-hero { padding: 40px; }
+}
+
+@media (max-width: 768px) {
+  /* .hp-container{ padding-top: 60px;} */
+  .hp-hero { flex-direction: column; text-align: center; }
+  .hp-hero-image-wrap { margin-top: 32px; justify-content: center; }
+  .hp-prod-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .hp-prod-grid { grid-template-columns: 1fr; }
+  .hp-brands-row { gap: 16px; }
+  .hp-brand-circle { width: 90px; height: 90px; padding: 16px; }
+}

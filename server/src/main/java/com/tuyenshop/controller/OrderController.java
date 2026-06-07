@@ -2,6 +2,7 @@ package com.tuyenshop.controller;
 
 import com.tuyenshop.model.Order;
 import com.tuyenshop.payload.request.CheckoutRequest;
+import com.tuyenshop.payload.request.UpdateOrderStatusRequest;
 import com.tuyenshop.payload.response.ApiResponse;
 import com.tuyenshop.service.OrderService;
 import jakarta.validation.Valid;
@@ -41,5 +42,13 @@ public class OrderController {
         // In a real application, we should ensure users can only view their own orders unless they are ADMIN.
         // For simplicity, we just fetch it here. We can add more specific access control in Service layer later.
         return ApiResponse.success(orderService.getOrderById(id));
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<com.tuyenshop.payload.response.OrderResponse> updateOrderStatus(
+            @PathVariable Long id, 
+            @Valid @RequestBody UpdateOrderStatusRequest request) {
+        return ApiResponse.success(orderService.updateOrderStatus(id, request));
     }
 }

@@ -47,6 +47,9 @@ public class Product {
 
     private String slug;
 
+    @Column(name = "is_featured", columnDefinition = "boolean default false")
+    private Boolean featured = false;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;

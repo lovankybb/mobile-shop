@@ -5,6 +5,7 @@ import com.tuyenshop.exception.ErrorCode;
 import com.tuyenshop.model.*;
 import com.tuyenshop.payload.request.CheckoutRequest;
 import com.tuyenshop.payload.request.OrderItemRequest;
+import com.tuyenshop.payload.request.UpdateOrderStatusRequest;
 import com.tuyenshop.payload.response.OrderResponse;
 import com.tuyenshop.mapper.OrderMapper;
 import com.tuyenshop.repository.OrderDetailRepository;
@@ -46,6 +47,7 @@ public class OrderService {
         order.setCustomerName(request.getCustomerName());
         order.setCustomerPhone(request.getCustomerPhone());
         order.setCustomerAddress(request.getCustomerAddress());
+        order.setNote(request.getNote());
         order.setPaymentMethod(request.getPaymentMethod());
         order.setOrderStatus(OrderStatus.PENDING);
         order.setPaymentStatus(PaymentStatus.PENDING);
@@ -86,10 +88,12 @@ public class OrderService {
         return orderMapper.toResponse(orderRepository.save(order));
     }
 
+    @Transactional(readOnly = true)
     public Page<OrderResponse> getAllOrders(Pageable pageable) {
         return orderRepository.findAll(pageable).map(orderMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public Page<OrderResponse> getMyOrders(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
@@ -102,8 +106,23 @@ public class OrderService {
         return orderRepository.findByUserId(user.getId(), pageable).map(orderMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         return orderMapper.toResponse(orderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND)));
+    }
+
+    @Transactional
+    public OrderResponse updateOrderStatus(Long id, UpdateOrderStatusRequest request) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        order.setOrderStatus(request.getStatus());
+        
+        // If order status is DELIVERED, we might also want to set payment status to SUCCESS for COD
+        if (request.getStatus() == OrderStatus.DELIVERED && order.getPaymentMethod() == PaymentMethod.COD) {
+            order.setPaymentStatus(PaymentStatus.SUCCESS);
+        }
+        
+        return orderMapper.toResponse(orderRepository.save(order));
     }
 }

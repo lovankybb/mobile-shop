@@ -37,9 +37,13 @@ public class VnPayConfig {
             String fieldName = (String) itr.next();
             String fieldValue = (String) fields.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                sb.append(fieldName);
-                sb.append("=");
-                sb.append(fieldValue);
+                try {
+                    sb.append(java.net.URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                    sb.append("=");
+                    sb.append(java.net.URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             if (itr.hasNext()) {
                 sb.append("&");

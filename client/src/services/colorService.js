@@ -1,0 +1,21 @@
+import api from './api';
+
+export const getColors = async () => {
+  const response = await api.get('/colors');
+  return response.data;
+};
+
+export const createColor = async (colorData) => {
+  const response = await api.post('/colors', colorData);
+  return response.data;
+};
+
+export const updateColor = async (id, colorData) => {
+  const response = await api.put(`/colors/${id}`, colorData);
+  return response.data;
+};
+
+export const deleteColor = async (id) => {
+  const response = await api.delete(`/colors/${id}`);
+  return response.data;
+};

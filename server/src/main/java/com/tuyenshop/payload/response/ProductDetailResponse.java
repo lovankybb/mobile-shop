@@ -23,6 +23,8 @@ public class ProductDetailResponse {
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
     
+    private Boolean featured;
+    
     private Long brandId;
     private String brandName;
     private Long categoryId;

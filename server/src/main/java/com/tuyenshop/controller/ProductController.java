@@ -20,8 +20,8 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ApiResponse<Page<com.tuyenshop.payload.response.ProductResponse>> getProducts(@RequestParam(required = false) String keyword, @RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long brandId, @RequestParam(required = false) BigDecimal minPrice, @RequestParam(required = false) BigDecimal maxPrice, Pageable pageable) {
-        return ApiResponse.success(productService.getProductsByFilter(keyword, categoryId, brandId, minPrice, maxPrice, pageable));
+    public ApiResponse<Page<com.tuyenshop.payload.response.ProductResponse>> getProducts(@RequestParam(required = false) String keyword, @RequestParam(required = false) Long categoryId, @RequestParam(required = false) Long brandId, @RequestParam(required = false) BigDecimal minPrice, @RequestParam(required = false) BigDecimal maxPrice, @RequestParam(required = false) Boolean featured, Pageable pageable) {
+        return ApiResponse.success(productService.getProductsByFilter(keyword, categoryId, brandId, minPrice, maxPrice, featured, pageable));
     }
 
     @GetMapping("/{id}")
@@ -54,6 +54,12 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<com.tuyenshop.payload.response.ProductResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductCreationRequest request) {
         return ApiResponse.success(productService.updateProduct(id, request));
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<com.tuyenshop.payload.response.ProductResponse> updateProductStatus(@PathVariable Long id, @RequestParam com.tuyenshop.model.ProductStatus status) {
+        return ApiResponse.success(productService.updateProductStatus(id, status));
     }
 
     @DeleteMapping("/{id}")

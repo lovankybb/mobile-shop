@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 public class ProductCreationRequest {
+    private List<String> images;
     @NotBlank
     private String name;
     
@@ -28,4 +30,6 @@ public class ProductCreationRequest {
     private ProductStatus status;
     
     private String slug;
+    
+    private Boolean featured;
 }

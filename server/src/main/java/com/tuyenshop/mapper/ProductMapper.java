@@ -3,8 +3,10 @@ import com.tuyenshop.model.Product;
 import com.tuyenshop.payload.response.ProductResponse;
 import com.tuyenshop.payload.response.ProductDetailResponse;
 import com.tuyenshop.payload.response.ProductVariantSimpleResponse;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -12,7 +14,7 @@ public interface ProductMapper {
     @Mapping(source = "brand.name", target = "brandName")
     @Mapping(source = "category.id", target = "categoryId")
     @Mapping(source = "category.name", target = "categoryName")
-    @Mapping(target = "image", ignore = true)
+    @Mapping(target = "image", expression = "java(product.getImages() != null && !product.getImages().isEmpty() ? product.getImages().getFirst().getUrl() : null)")
     ProductResponse toResponse(Product product);
 
     @Mapping(source = "brand.id", target = "brandId")
@@ -30,4 +32,5 @@ public interface ProductMapper {
     @Mapping(source = "color.id", target = "colorId")
     @Mapping(source = "color.name", target = "colorName")
     ProductVariantSimpleResponse toVariantSimpleResponse(com.tuyenshop.model.ProductVariant variant);
+
 }

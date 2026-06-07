@@ -22,6 +22,8 @@ public class CheckoutRequest {
     @NotBlank
     private String customerAddress;
 
+    private String note;
+
     @NotNull
     private PaymentMethod paymentMethod;
 

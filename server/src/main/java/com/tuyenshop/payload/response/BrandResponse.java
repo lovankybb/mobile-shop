@@ -4,5 +4,6 @@ import lombok.*;
 public class BrandResponse {
     private Long id;
     private String name;
+    private String logo;
     private String description;
-    }
+}

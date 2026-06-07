@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +31,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
@@ -113,5 +118,32 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    public String uploadAvatar(Long id, MultipartFile file) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !userDetails.getUsername().equals(user.getUsername())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+
+        try {
+            if (user.getAvatarUrl() != null) {
+                cloudinaryService.deleteImageByUrl(user.getAvatarUrl());
+            }
+            String avatarUrl = cloudinaryService.uploadImage(file);
+            user.setAvatarUrl(avatarUrl);
+            userRepository.save(user);
+            return avatarUrl;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload avatar", e);
+        }
     }
 }

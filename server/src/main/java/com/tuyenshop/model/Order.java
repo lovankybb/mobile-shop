@@ -38,6 +38,9 @@ public class Order {
     @Column(name = "customer_address")
     private String customerAddress;
 
+    @Column(name = "note")
+    private String note;
+
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
